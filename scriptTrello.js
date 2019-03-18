@@ -1,15 +1,15 @@
 $(document).ready(function() {
-
-    var apiRoot = 'https://localhost:8080/v1/task/';
+  const apiRoot = 'http://localhost:8080/v1/task/';
   const trelloApiRoot = 'http://localhost:8080/v1/trello/';
   const datatableRowTemplate = $('[data-datatable-row-template]').children()[0];
   const $tasksContainer = $('[data-tasks-container]');
 
   var availableBoards = {};
   var availableTasks = {};
-  
-    // init
-    getAllTasks();
+
+  // init
+
+  getAllTasks();
 
   function getAllAvailableBoards(callback, callbackArgs) {
     var requestUrl = trelloApiRoot + 'getTrelloBoards';
@@ -21,19 +21,19 @@ $(document).ready(function() {
       success: function(boards) { callback(callbackArgs, boards); }
     });
   }
-  
-    function createElement(data) {
-      var element = $(datatableRowTemplate).clone();
-  
-      element.attr('data-task-id', data.id);
-      element.find('[data-task-name-section] [data-task-name-paragraph]').text(data.title);
-      element.find('[data-task-name-section] [data-task-name-input]').val(data.title);
-  
-      element.find('[data-task-content-section] [data-task-content-paragraph]').text(data.content);
-      element.find('[data-task-content-section] [data-task-content-input]').val(data.content);
-  
-      return element;
-    }
+
+  function createElement(data) {
+    const element = $(datatableRowTemplate).clone();
+
+    element.attr('data-task-id', data.id);
+    element.find('[data-task-name-section] [data-task-name-paragraph]').text(data.title);
+    element.find('[data-task-name-section] [data-task-name-input]').val(data.title);
+
+    element.find('[data-task-content-section] [data-task-content-paragraph]').text(data.content);
+    element.find('[data-task-content-section] [data-task-content-input]').val(data.content);
+
+    return element;
+  }
 
   function prepareBoardOrListSelectOptions(availableChoices) {
     return availableChoices.map(function(choice) {
@@ -43,7 +43,6 @@ $(document).ready(function() {
                 .text(choice.name || 'Unknown name');
     });
   }
-  	
 
   function handleDatatableRender(taskData, boards) {
     $tasksContainer.empty();
@@ -62,7 +61,7 @@ $(document).ready(function() {
         .appendTo($tasksContainer);
     });
   }
-  
+
   function getAllTasks() {
     const requestUrl = apiRoot + 'getTasks';
 
@@ -79,7 +78,7 @@ $(document).ready(function() {
       }
     });
   }
-  
+
   function handleTaskUpdateRequest() {
     var parentEl = $(this).parents('[data-task-id]');
     var taskId = parentEl.attr('data-task-id');
@@ -105,10 +104,11 @@ $(document).ready(function() {
       }
     });
   }
-  
+
     function handleTaskDeleteRequest() {
-      var parentEl = $(this).parent().parent();
+      var parentEl = $(this).parents('[data-task-id]');
       var taskId = parentEl.attr('data-task-id');
+	console.log(taskId);
       var requestUrl = apiRoot + 'deleteTaskById/' + taskId;
      
 	
@@ -121,7 +121,7 @@ $(document).ready(function() {
         }
       })
     }
-  
+
   function handleTaskSubmitRequest(event) {
     event.preventDefault();
 
@@ -147,6 +147,7 @@ $(document).ready(function() {
       }
     });
   }
+
   function toggleEditingState() {
     var parentEl = $(this).parents('[data-task-id]');
     parentEl.toggleClass('datatable__row--editing');
